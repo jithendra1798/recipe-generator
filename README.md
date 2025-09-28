@@ -23,5 +23,5 @@ PowerShell:
 ### 4) Pull normal commits
 1. `git pull origin main`  
 
-# 5) Pull the associated LFS objects (if they didn’t auto-download)
-git lfs pull
+### 5) Pull the associated LFS objects (if they didn’t auto-download)
+1. `git lfs pull`
