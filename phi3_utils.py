@@ -125,3 +125,77 @@ def recipes_of(ingredients, n=10, *, model_dir: str = _MODEL_DIR, max_tokens: in
 
     # Last resort: return empty list (caller can retry with lower max_tokens)
     return recipes[:n]
+
+def recipe_of_name(recipe_name, available_ingredients=None, *, model_dir: str = _MODEL_DIR, max_tokens: int = 520):
+    """
+    Returns a compact recipe (string) for the given recipe name.
+    Streams tokens and stops once the recipe is complete.
+    """
+    # lazy import to avoid new globals
+    import re
+
+    model, tokenizer, stream = _ensure_loaded(model_dir)
+
+    # Keep the model focused and terse
+    system_txt = (
+        "Output ONLY the recipe in this exact format (no extra text):\n"
+        "Ingredients:\n- item\n- item\n"
+        "Prep time: <minutes>\n"
+        "Cook time: <minutes>\n"
+        "Steps:\n"
+        "1. ...\n2. ...\n3. ...\n4. ...\n5. ...\n6. ...\n"
+        "Notes: <one short sentence>"
+    )
+    ing_hint = ""
+    if available_ingredients:
+        ing_hint = " Use only the named ingredients plus salt, pepper, oil, water. Available: " + ", ".join(available_ingredients) + "."
+    user_txt = f'Write a compact recipe for "{recipe_name}".{ing_hint} Keep steps short.'
+
+    prompt_text = _build_prompt(tokenizer, system_txt, user_txt, model_dir)
+
+    params = og.GeneratorParams(model)
+    params.set_search_options(max_length=int(max_tokens), temperature=0.5, top_p=0.9, top_k=0)
+
+    gen = og.Generator(model, params)
+    gen.append_tokens(tokenizer.encode(prompt_text))
+
+    buf = []
+    have_ingredients = False
+    have_prep = False
+    have_cook = False
+    have_steps = False
+    step_count = 0
+    have_notes = False
+
+    step_re = re.compile(r"(^|\n)\s*\d+\.\s")  # counts numbered steps
+
+    while not gen.is_done():
+        gen.generate_next_token()
+        for tok in gen.get_next_tokens():
+            piece = stream.decode(tok)
+            if not piece:
+                continue
+            buf.append(piece)
+            text = ''.join(buf)
+
+            # lightweight section checks
+            if not have_ingredients and "Ingredients:" in text:
+                have_ingredients = True
+            if not have_prep and "Prep time:" in text:
+                have_prep = True
+            if not have_cook and "Cook time:" in text:
+                have_cook = True
+            if not have_steps and "Steps:" in text:
+                have_steps = True
+            if not have_notes and "Notes:" in text:
+                have_notes = True
+
+            # count steps seen so far
+            step_count = len(step_re.findall(text)) if have_steps else 0
+
+            # Early stop when recipe looks complete
+            if have_ingredients and have_prep and have_cook and have_steps and (have_notes or step_count >= 6):
+                return text.strip()
+
+    # Fallback: return whatever we have (caller can decide to retry)
+    return ''.join(buf).strip()
