@@ -10,18 +10,18 @@ PowerShell:
 
 
 ### 1) Install and enable LFS (one-time per machine)
-`winget install GitHub.GitLFS`
-`git lfs install`
+1. `winget install GitHub.GitLFS`
+2. `git lfs install`
 
 ### 2) Clone as usual; LFS files download automatically at checkout
-`git clone https://github.com/<user>/<repo>.git`
-`cd <repo>`
+1. `git clone https://github.com/<user>/<repo>.git`
+2. `cd <repo>`
 
 ### 3) Ensure LFS is enabled in this repo
-`git lfs install`
+1. `git lfs install`
 
 ### 4) Pull normal commits
-`git pull origin main`  
+1. `git pull origin main`  
 
 # 5) Pull the associated LFS objects (if they didn’t auto-download)
 git lfs pull
