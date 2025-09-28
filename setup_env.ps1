@@ -10,4 +10,7 @@ python -m pip install --upgrade pip
 # Install dependencies from requirements.txt
 pip install -r requirements.txt
 
+setx HF_HUB_ENABLE_HF_TRANSFER 1
+
+
 Write-Host "✅ Virtual environment setup complete. Use '.\venv\Scripts\Activate.ps1' to activate it later."
