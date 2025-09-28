@@ -1,9 +1,14 @@
 package com.example.frontend.componants
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,18 +25,108 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.R
 import com.example.frontend.ui.theme.FrontEndTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 
+// region: AddPhotoActivity Code
+class AddPhotoActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            FrontEndTheme {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = Color(0xFFFF7900) // orange background
+                ) { innerPadding ->
+                    GreetingAddPhoto(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GreetingAddPhoto(modifier: Modifier = Modifier) {
+    // Get the current context to start a new activity
+    val context = LocalContext.current
+
+    // Animation state
+    val offsetX = remember { Animatable(-500f) }
+
+    LaunchedEffect(Unit) {
+        offsetX.animateTo(
+            targetValue = 0f,
+            animationSpec = tween(durationMillis = 1500, easing = LinearEasing)
+        )
+    }
+
+    // Whole screen layout
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            text = "Upload a Photo",
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.images),
+            contentDescription = "Upload placeholder image",
+            modifier = Modifier.padding(vertical = 24.dp)
+        )
+
+        // --- MODIFIED BUTTON ---
+        // This button now launches the Verify activity
+        Button(
+            onClick = {
+                val intent = Intent(context, Verify::class.java)
+                context.startActivity(intent)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF6A482A), // brown button background
+                contentColor = Color.White          // text/icon color
+            )
+        ) {
+            Text("Open Library")
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingAddPhotoPreview() {
+    FrontEndTheme {
+        GreetingAddPhoto(modifier = Modifier.fillMaxSize())
+    }
+}
+// endregion
+
+// region: VerifyActivity Code
 class Verify : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,15 +137,10 @@ class Verify : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Color(0xFFffc9f1) // light pink background
                 ) { innerPadding ->
-                    val currentDate = LocalDate.now().format(
-                        DateTimeFormatter.ofPattern("MMMM d, yyyy")
-                    )
-
                     VerifyScreen(
                         modifier = Modifier
                             .padding(innerPadding)
                             .fillMaxSize(),
-                        // CHANGE #1: Pass the finish() command to the composable
                         onNavigateBack = { finish() }
                     )
                 }
@@ -59,7 +149,6 @@ class Verify : ComponentActivity() {
     }
 }
 
-// CHANGE #2: Add the onNavigateBack function parameter
 @Composable
 fun VerifyScreen(
     modifier: Modifier = Modifier,
@@ -69,7 +158,6 @@ fun VerifyScreen(
         mutableStateListOf("Click me to edit", "Swipe to delete", "Add more items below")
     }
 
-    // --- State to manage editing ---
     var editingIndex by remember { mutableStateOf<Int?>(null) }
     var editingText by remember { mutableStateOf("") }
 
@@ -86,7 +174,6 @@ fun VerifyScreen(
             modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
         )
 
-        // --- Middle (List) Section ---
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -115,7 +202,6 @@ fun VerifyScreen(
             }
         }
 
-        // --- Bottom (Buttons) Section ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,7 +209,6 @@ fun VerifyScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
-                // CHANGE #3: Call onNavigateBack when the "N" button is clicked
                 onClick = onNavigateBack,
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Red),
                 modifier = Modifier.weight(1f)
@@ -135,7 +220,7 @@ fun VerifyScreen(
             ) { Text("Add") }
 
             Button(
-                onClick = { /* TODO: Handle 'Yes' action */ },
+                onClick = onNavigateBack,
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Green, contentColor = Color.White),
                 modifier = Modifier.weight(1f)
             ) { Text("Y") }
@@ -237,7 +322,6 @@ fun EditableListItem(
 fun VerifyPreview() {
     FrontEndTheme {
         Surface(color = Color(0xFFffc9f1)) {
-            // CHANGE #4: Provide an empty lambda for the preview to compile
             VerifyScreen(
                 modifier = Modifier.fillMaxSize(),
                 onNavigateBack = {}
@@ -245,3 +329,4 @@ fun VerifyPreview() {
         }
     }
 }
+// endregion
