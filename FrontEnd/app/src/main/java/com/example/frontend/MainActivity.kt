@@ -4,11 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -18,26 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.theme.FrontEndTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.foundation.background
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +32,7 @@ class MainActivity : ComponentActivity() {
             FrontEndTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    containerColor = Color(0xFFffc9f1) // orange background
+                    containerColor = Color(0xFFffc9f1) // light pink background
                 ) { innerPadding ->
                     val currentDate = LocalDate.now().format(
                         DateTimeFormatter.ofPattern("MMMM d, yyyy")
@@ -65,29 +50,34 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    // State for our dynamic list of items.
+    val items = remember {
+        mutableStateListOf(
+            "Scrollable Item 1", "Scrollable Item 2", "Scrollable Item 3",
+            "Scrollable Item 4", "Scrollable Item 5", "Scrollable Item 6",
+            "Scrollable Item 7", "Scrollable Item 8", "Scrollable Item 9",
+            "Scrollable Item 10", "Scrollable Item 11", "Scrollable Item 12",
+            "Scrollable Item 13", "Scrollable Item 14", "Scrollable Item 15",
+            "Scrollable Item 16", "Scrollable Item 17", "Scrollable Item 18",
+            "Scrollable Item 19", "Scrollable Item 20",
+        )
+    }
 
-
-    // Main layout Column
+    // The main Column now arranges the major sections of the screen.
+    // The `verticalScroll` has been removed to prevent nested scrolling issues.
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()), // Add this if the content might exceed screen height
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        // --- Top Section ---
         Text(
             text = name,
             fontSize = 36.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Red,
-            modifier = Modifier.padding(vertical = 24.dp)
+            modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
         )
-
         Text(
             text = "Verify",
             fontSize = 24.sp,
@@ -96,129 +86,69 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-
-
-        Box(
+        // --- Middle (List) Section ---
+        // LazyColumn now uses weight(1f) to fill all available space.
+        // This pushes the buttons to the bottom correctly.
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .offset(30.dp, 10.dp) // position
-                    .size(width = 350.dp, height = 100.dp)
-                    .background(Color.Black) // rectangle color
-                    .padding(16.dp), // space inside rectangle
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "",
-                    color = Color.White,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center
+            items(items = items, key = { it }) { item ->
+                ListItem(
+                    text = item,
+                    onDelete = { items.remove(item) }
                 )
             }
         }
 
-
-
-
-
-
-
-        Column(
-            modifier = Modifier
-                .weight(1f) // Allow this Column to take available space
-                .padding(horizontal = 16.dp)
-        ) {
-
-        }
-
-
-
-        Column(
-            modifier = Modifier
-                .weight(1f) // Allow this Column to take available space
-                .padding(horizontal = 16.dp)
-        ) {
-
-        }
-
-
-
-
-
-
-
-
-
-
-        // Yes/No Buttons
+        // --- Bottom (Buttons) Section ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
-                onClick = { /* TODO */ },
+                onClick = { /* TODO: Handle 'No' action */ },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color.Red
-                )
+                ),
+                modifier = Modifier.weight(1f).padding(end = 8.dp)
             ) { Text("N") }
-            Button(onClick = { /* TODO */ },
+            Button(
+                onClick = { /* TODO: Handle 'Yes' action */ },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Green,
                     contentColor = Color.White
-                )) { Text("Y") }
-
+                ),
+                modifier = Modifier.weight(1f).padding(start = 8.dp)
+            ) { Text("Y") }
         }
 
-        // Start of Bottom Comps
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Button(
-                onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )
-            ) { Text("+") }
-            Button(onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )) { Text("Today") }
-            Button(onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )) { Text("Past") }
-            Button(onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )) { Text("Like") }
-            Button(onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )) { Text("Pass") }
+            Button(onClick = { /* TODO */ }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) { Text("+") }
+            Button(onClick = { /* TODO */ }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) { Text("Today") }
+            Button(onClick = { /* TODO */ }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) { Text("Past") }
+            Button(onClick = { /* TODO */ }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) { Text("Like") }
+            Button(onClick = { /* TODO */ }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) { Text("Pass") }
         }
-        // End of Bottom Comps
     }
 }
-
 
 @Composable
 fun ListItem(text: String, onDelete: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.Red) // Red card
+        colors = CardDefaults.cardColors(containerColor = Color.Red)
     ) {
         Row(
             modifier = Modifier
@@ -231,7 +161,7 @@ fun ListItem(text: String, onDelete: () -> Unit) {
                 text = text,
                 color = Color.White,
                 fontSize = 16.sp,
-                modifier = Modifier.weight(1f) // Ensure text doesn't push the button away
+                modifier = Modifier.weight(1f)
             )
             IconButton(onClick = onDelete) {
                 Icon(
@@ -244,15 +174,12 @@ fun ListItem(text: String, onDelete: () -> Unit) {
     }
 }
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     FrontEndTheme {
         val previewDate = LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
-        // We wrap the preview in a surface to set a background color for better visibility
-        Surface(color = Color(0xFFFF7900)) {
+        Surface(color = Color(0xFFffc9f1)) {
             Greeting(name = previewDate, modifier = Modifier.fillMaxSize())
         }
     }
