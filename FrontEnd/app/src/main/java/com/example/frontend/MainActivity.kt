@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.example.frontend.componants.HistoryScreen
+import com.example.frontend.componants.RecommendationsScreen
+import com.example.frontend.componants.RecommendationsScreenRej // Import the new screen
 import com.example.frontend.componants.VerifyScreen
 import com.example.frontend.ui.theme.FrontEndTheme
 import java.time.LocalDate
@@ -47,12 +49,18 @@ fun MyApp() {
         composable("verify") {
             VerifyScreen(onNavigateBack = { navController.popBackStack() })
         }
-        // CHANGE #1: Add the new "history" route
         composable("history") {
             val currentDate = LocalDate.now().format(
                 DateTimeFormatter.ofPattern("MMMM d, yyyy")
             )
             HistoryScreen(name = currentDate)
+        }
+        composable("recommendations") {
+            RecommendationsScreen()
+        }
+        // CHANGE #1: Add the route for the "rejected" recommendations screen
+        composable("recommendations_rejected") {
+            RecommendationsScreenRej()
         }
     }
 }
@@ -107,7 +115,6 @@ fun Greeting(modifier: Modifier = Modifier, navController: NavController) {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            // This button goes to the Verify screen
             Button(
                 onClick = { navController.navigate("verify") },
                 colors = ButtonDefaults.buttonColors(
@@ -116,7 +123,6 @@ fun Greeting(modifier: Modifier = Modifier, navController: NavController) {
                 )
             ) { Text("+") }
 
-            // CHANGE #2: Make the "History" button navigate to the history route
             Button(
                 onClick = { navController.navigate("history") },
                 colors = ButtonDefaults.buttonColors(
@@ -126,15 +132,16 @@ fun Greeting(modifier: Modifier = Modifier, navController: NavController) {
             ) { Text("History") }
 
             Button(
-                onClick = { /* TODO */ },
+                onClick = { navController.navigate("recommendations") },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
                 )
             ) { Text("\uD83D\uDC4D") } // 👍
 
+            // CHANGE #2: Make the "Thumbs Down" button navigate to the new screen
             Button(
-                onClick = { /* TODO */ },
+                onClick = { navController.navigate("recommendations_rejected") },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
