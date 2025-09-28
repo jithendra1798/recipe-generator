@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.example.frontend.componants.HistoryScreen
-import com.example.frontend.componants.RecommendationsScreen
 import com.example.frontend.componants.RecommendationsScreenRej // Import the new screen
 import com.example.frontend.componants.VerifyScreen
 import com.example.frontend.ui.theme.FrontEndTheme
@@ -54,9 +53,6 @@ fun MyApp() {
                 DateTimeFormatter.ofPattern("MMMM d, yyyy")
             )
             HistoryScreen(name = currentDate)
-        }
-        composable("recommendations") {
-            RecommendationsScreen()
         }
         // CHANGE #1: Add the route for the "rejected" recommendations screen
         composable("recommendations_rejected") {
@@ -132,7 +128,7 @@ fun Greeting(modifier: Modifier = Modifier, navController: NavController) {
             ) { Text("History") }
 
             Button(
-                onClick = { navController.navigate("recommendations") },
+                onClick = { },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF6A482A),
                     contentColor = Color.White

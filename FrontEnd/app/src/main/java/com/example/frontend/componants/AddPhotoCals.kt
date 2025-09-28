@@ -86,39 +86,6 @@ fun GreetingAddPhoto(modifier: Modifier = Modifier) {
                 contentColor = Color.White          // text/icon color
             )) { Text("Open Library") }
 
-
-        // Spacer to separate text and buttons
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Row for buttons at bottom
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-//                .background(color = Color(color = 0xFF6A482A)),
-
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF6A482A), // brown button background
-                contentColor = Color.White          // text/icon color
-            )) { Text("Current") }
-            Button(onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6A482A), // brown button background
-                    contentColor = Color.White          // text/icon color
-                )) { Text("History") }
-            Button(onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6A482A), // brown button background
-                    contentColor = Color.White          // text/icon color
-                )) { Text("Liked") }
-            Button(onClick = { /* TODO */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6A482A), // brown button background
-                    contentColor = Color.White          // text/icon color
-                )) { Text("Passed") }
         }
     }
 }

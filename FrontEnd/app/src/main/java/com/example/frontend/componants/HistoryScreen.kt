@@ -101,7 +101,7 @@ fun HistoryScreen(name: String, modifier: Modifier = Modifier) {
             ) {
                 // Add button now creates a default FoodItem
                 Button(
-                    onClick = { items.add(FoodItem(title = "New Item", calories = 0)) },
+                    onClick = {  },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF6A482A),
                         contentColor = Color.White

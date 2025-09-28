@@ -128,7 +128,7 @@ fun ScrollHistoryData(name: String, modifier: Modifier = Modifier) {
         ) {
             // This button now adds a new item to our list
             Button(
-                onClick = { },
+                onClick = { /* TODO */ },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF6A482A),
                     contentColor = Color.White

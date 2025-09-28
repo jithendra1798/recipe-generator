@@ -1,14 +1,11 @@
 package com.example.frontend.componants
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,25 +13,53 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.frontend.ui.theme.FrontEndTheme
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.util.UUID
 
+/**
+ * A data class to represent a recipe with a title, calorie count, and steps.
+ */
+data class PassedRecipeItem(
+    val id: UUID = UUID.randomUUID(),
+    val title: String,
+    val calories: Int,
+    val steps: String
+)
+
+// CHANGE 1: Added NavController to handle navigation from this screen.
 @Composable
-fun RecommendationsScreen(modifier: Modifier = Modifier) {
+fun PassedRecommendationsScreenRej(navController: NavController, modifier: Modifier = Modifier) {
     val items = remember {
         mutableStateListOf(
-            "Scrollable Item 1", "Scrollable Item 2", "Scrollable Item 3",
-            "Scrollable Item 4", "Scrollable Item 5", "Scrollable Item 6",
-            "Scrollable Item 7", "Scrollable Item 8", "Scrollable Item 9",
-            "Scrollable Item 10", "Scrollable Item 11", "Scrollable Item 12",
-            "Scrollable Item 13", "Scrollable Item 14", "Scrollable Item 15",
-            "Scrollable Item 16", "Scrollable Item 17", "Scrollable Item 18",
-            "Scrollable Item 19", "Scrollable Item 20",
+            PassedRecipeItem(
+                title = "Grilled Chicken Salad",
+                calories = 350,
+                steps = "1. Season 4oz chicken breast with salt and pepper.\n" +
+                        "2. Grill for 6-8 minutes per side until cooked through.\n" +
+                        "3. Chop romaine lettuce, cherry tomatoes, and cucumber.\n" +
+                        "4. Slice the chicken and combine with vegetables."
+            ),
+            PassedRecipeItem(
+                title = "Simple Salmon & Asparagus",
+                calories = 450,
+                steps = "1. Preheat oven to 400°F (200°C).\n" +
+                        "2. Place a 6oz salmon fillet and a handful of asparagus on a baking sheet.\n" +
+                        "3. Drizzle with olive oil, lemon juice, salt, and pepper.\n" +
+                        "4. Bake for 12-15 minutes."
+            ),
+            PassedRecipeItem(
+                title = "Oatmeal with Berries",
+                calories = 250,
+                steps = "1. Combine 1/2 cup of rolled oats with 1 cup of water or milk.\n" +
+                        "2. Cook on medium heat for 5 minutes, stirring occasionally.\n" +
+                        "3. Top with a handful of mixed berries and a drizzle of honey."
+            )
         )
     }
 
-    val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
+    var expandedItemId by remember { mutableStateOf<UUID?>(null) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -47,7 +72,7 @@ fun RecommendationsScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Liked Recs",
+                text = "Passed Recs",
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Red,
@@ -61,14 +86,18 @@ fun RecommendationsScreen(modifier: Modifier = Modifier) {
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(items = items, key = { it }) { item ->
-                    RecommendationsListItem(
-                        text = item,
-                        onDelete = { items.remove(item) }
+                items(items = items, key = { it.id }) { item ->
+                    PassedRecipeListItem(
+                        item = item,
+                        isExpanded = expandedItemId == item.id,
+                        onClick = {
+                            expandedItemId = if (expandedItemId == item.id) null else item.id
+                        }
                     )
                 }
             }
 
+            // CHANGE 2: The bottom buttons now navigate to the correct screens.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -76,84 +105,87 @@ fun RecommendationsScreen(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(
-                    onClick = {  },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    )
+                    onClick = { navController.navigate("verify") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White)
                 ) { Text("+") }
                 Button(
-                    onClick = {  },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    )
+                    onClick = { navController.navigate("history") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White)
                 ) { Text("History") }
-
-                // CHANGE #2: Make the "Thumbs Up" button navigate to the recommendations route
                 Button(
-                    onClick = { },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    )
+                    onClick = { navController.navigate("recommendations") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White)
                 ) { Text("\uD83D\uDC4D") } // 👍
-
                 Button(
-                    onClick = { /* TODO */ },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    )
+                    onClick = { navController.navigate("recommendations_rejected") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White)
                 ) { Text("\uD83D\uDC4E") } // 👎
-
                 Button(
-                    onClick = { /* TODO */ },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    )
+                    onClick = { navController.navigate("tinder") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White)
                 ) { Text("\uD83D\uDC4B") } // 👋
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecommendationsListItem(text: String, onDelete: () -> Unit) {
+fun PassedRecipeListItem(
+    // CHANGE 3: Fixed the type from RecipeItem to PassedRecipeItem to match your data class.
+    item: PassedRecipeItem,
+    isExpanded: Boolean,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(),
         colors = CardDefaults.cardColors(containerColor = Color.Red)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            Text(
-                text = text,
-                color = Color.White,
-                fontSize = 16.sp,
-                modifier = Modifier.weight(1f)
-            )
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Item",
-                    tint = Color.White
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = item.title,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "${item.calories} cal",
+                    color = Color.LightGray,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+
+            if (isExpanded) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = item.steps,
+                    color = Color.White,
+                    fontSize = 14.sp
                 )
             }
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun RecommendationsScreenPreview() {
+fun PassedRecommendationsScreenRejPreview() {
     FrontEndTheme {
-        RecommendationsScreen(modifier = Modifier.fillMaxSize())
+        // CHANGE 4: Added a dummy NavController for the preview to work.
+        PassedRecommendationsScreenRej(navController = rememberNavController(), modifier = Modifier.fillMaxSize())
     }
 }

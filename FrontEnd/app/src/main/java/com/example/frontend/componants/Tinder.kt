@@ -182,32 +182,45 @@ fun Tinder(name: String, modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
-                onClick = { /* TODO */ },
+                onClick = { ""},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
                 )
             ) { Text("+") }
-            Button(onClick = { /* TODO */ },
+
+            Button(
+                onClick = { ""},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
-                )) { Text("Today") }
-            Button(onClick = { /* TODO */ },
+                )
+            ) { Text("History") }
+
+            Button(
+                onClick = { ""},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
-                )) { Text("Past") }
-            Button(onClick = { /* TODO */ },
+                )
+            ) { Text("\uD83D\uDC4D") } // 👍
+
+            Button(
+                onClick = { ""},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
-                )) { Text("Like") }
-            Button(onClick = { /* TODO */ },
+                )
+            ) { Text("\uD83D\uDC4E") } // 👎
+
+            // CHANGE #2: Make the "wave" button navigate to the new "tinder" screen
+            Button(
+                onClick = { ""},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
-                )) { Text("Pass") }
+                )
+            ) { Text("\uD83D\uDC4B") } // 👋
         }
         // End of Bottom Comps
     }
