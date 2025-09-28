@@ -25,7 +25,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import com.example.frontend.R
 
-class MainActivity : ComponentActivity() {
+class AddPhotoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Color(0xFFFF7900) // orange background
                 ) { innerPadding ->
-                    Greeting(
+                    GreetingAddPhoto(
                         modifier = Modifier
                             .padding(innerPadding)
                             .fillMaxSize()
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(modifier: Modifier = Modifier) {
+fun GreetingAddPhoto(modifier: Modifier = Modifier) {
     // Animation state
     val offsetX = remember { Animatable(-500f) }
 
@@ -125,8 +125,8 @@ fun Greeting(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun GreetingAddPhotoPreview() {
     FrontEndTheme {
-        Greeting(modifier = Modifier.fillMaxSize())
+        GreetingAddPhoto(modifier = Modifier.fillMaxSize())
     }
 }

@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.componants
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,7 +24,7 @@ import com.example.frontend.ui.theme.FrontEndTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class MainActivity : ComponentActivity() {
+class ScrollDateAnimationRec : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                         DateTimeFormatter.ofPattern("MMMM d, yyyy")
                     )
 
-                    Greeting(
+                    ScrollDateAnimationRec(
                         name = currentDate,
                         modifier = Modifier
                             .padding(innerPadding)
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun ScrollDateAnimationRec(name: String, modifier: Modifier = Modifier) {
     // State for our dynamic list of items. We start with 3 items.
     // Compose will "remember" this list across recompositions.
     val items = remember {
@@ -104,7 +104,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp) // Adds space between items
         ) {
             items(items = items, key = { it }) { item ->
-                ListItem(
+                ScrollDateAnimationRecListItem(
                     text = item,
                     onDelete = { items.remove(item) } // Lambda to remove this specific item
                 )
@@ -155,7 +155,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
  * It contains the item text and a delete button.
  */
 @Composable
-fun ListItem(text: String, onDelete: () -> Unit) {
+fun ScrollDateAnimationRecListItem(text: String, onDelete: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.Red) // Red card
@@ -187,12 +187,12 @@ fun ListItem(text: String, onDelete: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun ScrollDateAnimationRecPreview() {
     FrontEndTheme {
         val previewDate = LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
         // We wrap the preview in a surface to set a background color for better visibility
         Surface(color = Color(0xFFFF7900)) {
-            Greeting(name = previewDate, modifier = Modifier.fillMaxSize())
+            ScrollDateAnimationRec(name = previewDate, modifier = Modifier.fillMaxSize())
         }
     }
 }

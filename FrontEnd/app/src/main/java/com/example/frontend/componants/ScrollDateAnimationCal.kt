@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.componants
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,7 +24,7 @@ import com.example.frontend.ui.theme.FrontEndTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class MainActivity : ComponentActivity() {
+class ScrollDateAnimationCal : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,13 +32,13 @@ class MainActivity : ComponentActivity() {
             FrontEndTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    containerColor = Color(0xFFffc9f1) // orange background
+                    containerColor = Color(0xFFFF7900) // orange background
                 ) { innerPadding ->
                     val currentDate = LocalDate.now().format(
                         DateTimeFormatter.ofPattern("MMMM d, yyyy")
                     )
 
-                    Greeting(
+                    ScrollDateAnimationCal(
                         name = currentDate,
                         modifier = Modifier
                             .padding(innerPadding)
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun ScrollDateAnimationCal(name: String, modifier: Modifier = Modifier) {
     // State for our dynamic list of items. We start with 3 items.
     // Compose will "remember" this list across recompositions.
     val items = remember {
@@ -86,12 +86,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        // 1. Top Section: Date Title
         Text(
             text = name,
             fontSize = 36.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Red,
+            color = Color.White,
             modifier = Modifier.padding(vertical = 24.dp)
         )
 
@@ -122,28 +122,28 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             Button(
                 onClick = { items.add("Added Item ${items.size + 1}") },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
                 )
             ) { Text("+") }
             Button(onClick = { /* TODO */ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
                 )) { Text("Today") }
             Button(onClick = { /* TODO */ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
                 )) { Text("Past") }
             Button(onClick = { /* TODO */ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
                 )) { Text("Like") }
             Button(onClick = { /* TODO */ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = Color(0xFF6A482A),
                     contentColor = Color.White
                 )) { Text("Pass") }
         }
@@ -158,7 +158,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun ListItem(text: String, onDelete: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.Red) // Red card
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF6A482A)) // Brown card
     ) {
         Row(
             modifier = Modifier
@@ -187,12 +187,12 @@ fun ListItem(text: String, onDelete: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun ScrollDateAnimationCalPreview() {
     FrontEndTheme {
         val previewDate = LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
         // We wrap the preview in a surface to set a background color for better visibility
         Surface(color = Color(0xFFFF7900)) {
-            Greeting(name = previewDate, modifier = Modifier.fillMaxSize())
+            ScrollDateAnimationCal(name = previewDate, modifier = Modifier.fillMaxSize())
         }
     }
 }
