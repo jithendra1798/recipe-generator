@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.componants
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.Dp
 
 
 
-class MainActivity : ComponentActivity() {
+class Tinder : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
                         DateTimeFormatter.ofPattern("MMMM d, yyyy")
                     )
 
-                    Greeting(
+                    Tinder(
                         name = currentDate,
                         modifier = Modifier
                             .padding(innerPadding)
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun Tinder(name: String, modifier: Modifier = Modifier) {
     // State for our dynamic list of items.
 
 
@@ -89,7 +89,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
 
         Text(
-            text = "Verify",
+            text = "Recipies",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF4A4A4A),
@@ -105,8 +105,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .offset(30.dp, 10.dp) // position
-                    .size(width = 350.dp, height = 100.dp)
-                    .background(Color.Black) // rectangle color
+                    .size(width = 350.dp, height = 550.dp)
+                    .background(Color.Blue) // rectangle color
                     .padding(16.dp), // space inside rectangle
                 contentAlignment = Alignment.Center
             ) {
@@ -215,7 +215,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun ListItem(text: String, onDelete: () -> Unit) {
+fun TinderListItem(text: String, onDelete: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.Red) // Red card
@@ -248,12 +248,12 @@ fun ListItem(text: String, onDelete: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun TinderPreview() {
     FrontEndTheme {
         val previewDate = LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
         // We wrap the preview in a surface to set a background color for better visibility
         Surface(color = Color(0xFFFF7900)) {
-            Greeting(name = previewDate, modifier = Modifier.fillMaxSize())
+            Tinder(name = previewDate, modifier = Modifier.fillMaxSize())
         }
     }
 }
