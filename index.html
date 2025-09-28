@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Image → Ingredients → Recipes</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body { margin: 24px; }
+    h1 { margin: 0 0 12px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin: 12px 0; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .thumb { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+    button { padding: 10px 14px; border-radius: 8px; border: 1px solid #111827; background:#111827; color:#fff; cursor:pointer; }
+    button[disabled]{ opacity:.5; cursor:not-allowed; }
+    .log { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; background:#0b1020; color:#e5e7eb; padding:12px; border-radius:8px; min-height:60px; }
+    ol { padding-left: 20px; }
+    textarea { width: 100%; min-height: 220px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    label { display:block; margin: 6px 0; font-size: 14px; color:#374151;}
+    input[type="number"]{ width: 80px; padding: 6px 8px; border:1px solid #d1d5db; border-radius:6px;}
+    .muted { color:#6b7280; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Image ➜ Ingredients ➜ Recipes</h1>
+
+  <div class="card">
+    <h3>Step 1 — Upload images</h3>
+    <div class="row">
+      <input id="files" type="file" accept="image/*" multiple />
+      <label>Recipe count:
+        <input id="count" type="number" min="1" max="20" value="5" />
+      </label>
+      <button id="btnRun">Upload & Predict</button>
+    </div>
+    <div id="thumbs" class="row" style="margin-top:12px;"></div>
+    <div id="log1" class="log" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <h3>Step 2 — Ingredients</h3>
+    <div id="ingredients" class="log"></div>
+  </div>
+
+  <div class="card">
+    <h3>Step 3 — Recipe ideas</h3>
+    <p class="muted">Generates titles from your local Phi-3 (via backend endpoints below).</p>
+    <button id="btnIdeas" disabled>Generate recipe titles</button>
+    <ol id="ideasList"></ol>
+  </div>
+
+  <div class="card">
+    <h3>Step 4 — Full recipe</h3>
+    <div class="row">
+      <label class="muted">Click a title above, or:</label>
+      <input id="manualTitle" placeholder="Type a recipe name…" style="flex:1; padding:8px; border:1px solid #d1d5db; border-radius:6px;" />
+      <button id="btnFull" disabled>Get full recipe</button>
+    </div>
+    <textarea id="fullRecipe" placeholder="Recipe will appear here…" readonly></textarea>
+  </div>
+
+<script>
+const API = "http://localhost:8000";
+const $ = (id) => document.getElementById(id);
+const log = (el, msg) => el.textContent += (el.textContent ? "\n" : "") + msg;
+
+const filesEl = $("files");
+const thumbs = $("thumbs");
+const log1 = $("log1");
+const btnRun = $("btnRun");
+const btnIdeas = $("btnIdeas");
+const btnFull = $("btnFull");
+const ideasList = $("ideasList");
+const ingrBox = $("ingredients");
+const countEl = $("count");
+const manualTitle = $("manualTitle");
+const fullRecipe = $("fullRecipe");
+
+let lastIngredients = [];
+let lastIdeas = [];
+
+filesEl.addEventListener("change", () => {
+  thumbs.innerHTML = "";
+  [...filesEl.files].forEach(f => {
+    const img = document.createElement("img");
+    img.className = "thumb";
+    img.src = URL.createObjectURL(f);
+    img.onload = () => URL.revokeObjectURL(img.src);
+    thumbs.appendChild(img);
+  });
+});
+
+btnRun.addEventListener("click", async () => {
+  log1.textContent = "";
+  ideasList.innerHTML = "";
+  ingrBox.textContent = "";
+  fullRecipe.value = "";
+  lastIngredients = [];
+  lastIdeas = [];
+  btnIdeas.disabled = true;
+  btnFull.disabled = true;
+
+  if (!filesEl.files.length) {
+    log(log1, "Please choose one or more images first.");
+    return;
+  }
+
+  try {
+    log(log1, "Uploading images…");
+    const fd = new FormData();
+    for (const f of filesEl.files) fd.append("files", f, f.name);
+
+    const res = await fetch(`${API}/upload-images`, { method: "POST", body: fd });
+    const data = await res.json();
+    log(log1, `Server responded (${res.status}).`);
+
+    if (!data || !Array.isArray(data.ingredients)) {
+      log(log1, "Unexpected response. Check /upload-images output shape.");
+      return;
+    }
+
+    // Your backend ‘test’ expects: [{"label": "..."}] — mirror that here
+    lastIngredients = data.ingredients.map(x => x.label ?? String(x).trim()).filter(Boolean);
+
+    ingrBox.textContent = JSON.stringify(lastIngredients, null, 2);
+    btnIdeas.disabled = lastIngredients.length === 0;
+    if (lastIngredients.length === 0) log(log1, "No labels found in response.");
+
+  } catch (e) {
+    log(log1, "Error: " + e);
+  }
+});
+
+btnIdeas.addEventListener("click", async () => {
+  ideasList.innerHTML = "";
+  fullRecipe.value = "";
+  btnFull.disabled = true;
+  lastIdeas = [];
+
+  const count = Math.max(1, Math.min(20, Number(countEl.value) || 5));
+
+  try {
+    const res = await fetch(`${API}/recipes-from-ingredients`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ingredients: lastIngredients, count })
+    });
+    const data = await res.json();
+    lastIdeas = Array.isArray(data.recipes) ? data.recipes : [];
+    ideasList.innerHTML = "";
+
+    lastIdeas.forEach((title, idx) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#";
+      a.textContent = title;
+      a.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        manualTitle.value = title;
+        btnFull.click();
+      });
+      li.appendChild(a);
+      ideasList.appendChild(li);
+    });
+
+    manualTitle.value = lastIdeas[0] || "";
+    btnFull.disabled = !manualTitle.value;
+
+  } catch (e) {
+    alert("Failed to get recipe titles. Did you add the backend endpoint? " + e);
+  }
+});
+
+btnFull.addEventListener("click", async () => {
+  fullRecipe.value = "Generating recipe…";
+  try {
+    const name = manualTitle.value.trim();
+    if (!name) { fullRecipe.value = "Enter a title first."; return; }
+
+    const res = await fetch(`${API}/recipe-details`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, available_ingredients: lastIngredients })
+    });
+    const data = await res.json();
+    fullRecipe.value = data.recipe || JSON.stringify(data, null, 2);
+  } catch (e) {
+    fullRecipe.value = "Failed to get recipe details. " + e;
+  }
+});
+</script>
+</body>
+</html>
