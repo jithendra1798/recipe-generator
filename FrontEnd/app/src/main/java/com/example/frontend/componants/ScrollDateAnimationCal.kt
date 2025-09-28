@@ -94,6 +94,14 @@ fun ScrollDateAnimationCal(name: String, modifier: Modifier = Modifier) {
             color = Color.White,
             modifier = Modifier.padding(vertical = 24.dp)
         )
+        Text(
+            text = "total",
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Red,
+            modifier = Modifier.padding(vertical = 12.dp)
+
+        )
 
 
         LazyColumn(

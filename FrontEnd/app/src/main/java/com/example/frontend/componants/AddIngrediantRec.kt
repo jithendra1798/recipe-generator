@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.componants
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,12 +24,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import com.example.frontend.R
 import com.example.frontend.ui.theme.FrontEndTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class MainActivity : ComponentActivity() {
+class AddIngrediantRec : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                         DateTimeFormatter.ofPattern("MMMM d, yyyy")
                     )
 
-                    Greeting(
+                    AddIngrediantRec(
                         name = currentDate,
                         modifier = Modifier
                             .padding(innerPadding)
@@ -55,10 +55,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun AddIngrediantRec(name: String, modifier: Modifier = Modifier) {
     // State for our dynamic list of items.
 
 
@@ -79,7 +77,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
 
         Text(
-            text = "Recipies",
+            text = "Your Photos",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF4A4A4A),
@@ -90,6 +88,56 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 
 
+
+
+        val imageResources = remember {
+            List(6) { R.drawable.images } // Replace R.drawable.images with your actual image resources
+        }
+
+        // We group the list of 6 images into chunks of 3 for a 2x3 grid
+        val imageRows = imageResources.chunked(3) // <-- Changed back to 3
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(70.dp) // Space between the two rows of image/button pairs
+        ) {
+            imageRows.forEach { rowImages ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between individual image/button pairs in a row
+                ) {
+                    rowImages.forEach { imageResId ->
+                        // Each image and button pair is wrapped in its own Column
+                        Column(
+                            modifier = Modifier.weight(1f), // Distributes space evenly in the Row
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp) // Space between image and button
+                        ) {
+                            Image(
+                                painter = painterResource(id = imageResId),
+                                contentDescription = "User uploaded photo",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth() // Fill width of its parent Column
+                                    .aspectRatio(1f) // Keep the image square
+                            )
+                            Button(
+                                onClick = { /* TODO: Implement logic for opening library for this specific image slot */ },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Red, // Red button background
+                                    contentColor = Color.White
+                                ),
+                                modifier = Modifier.fillMaxWidth() // Button fills the width of its parent Column
+                            ) {
+                                Text("Open Library", fontSize = 12.sp) // Smaller text for buttons in grid
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 
 
@@ -141,9 +189,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     }
 }
 
-
+/**
+ * A reusable composable for displaying a single row in our list.
+ * It contains the item text and a delete button.
+ */
 @Composable
-fun ListItem(text: String, onDelete: () -> Unit) {
+fun AddIngrediantRecListItem(text: String, onDelete: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.Red) // Red card
@@ -173,15 +224,14 @@ fun ListItem(text: String, onDelete: () -> Unit) {
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun AddIngrediantRecPreview() {
     FrontEndTheme {
         val previewDate = LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
         // We wrap the preview in a surface to set a background color for better visibility
         Surface(color = Color(0xFFFF7900)) {
-            Greeting(name = previewDate, modifier = Modifier.fillMaxSize())
+            AddIngrediantRec(name = previewDate, modifier = Modifier.fillMaxSize())
         }
     }
 }

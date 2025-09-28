@@ -41,6 +41,7 @@ android {
 
 dependencies {
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.23.0")
+    implementation("androidx.compose.runtime:runtime:1.6.7") // Use the latest stable version
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
