@@ -126,7 +126,7 @@ def recipes_of(ingredients, n=10, *, model_dir: str = _MODEL_DIR, max_tokens: in
     # Last resort: return empty list (caller can retry with lower max_tokens)
     return recipes[:n]
 
-def recipe_of_name(recipe_name, available_ingredients=None, *, model_dir: str = _MODEL_DIR, max_tokens: int = 520):
+def recipe_of_name(recipe_name, available_ingredients=None, *, model_dir: str = _MODEL_DIR, max_tokens: int = 250):
     """
     Returns a compact recipe (string) for the given recipe name.
     Streams tokens and stops once the recipe is complete.

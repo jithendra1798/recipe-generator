@@ -11,7 +11,7 @@ def _debug_model_dir(model_dir=_MODEL_DIR):
             print(os.path.basename(f), os.path.getsize(f), "bytes")
         except OSError as e:
             print(os.path.basename(f), "ERR:", e)
-_debug_model_dir(model_dir=_MODEL_DIR)
+# _debug_model_dir(model_dir=_MODEL_DIR)
 
 import re, ast
 from typing import List, Union
