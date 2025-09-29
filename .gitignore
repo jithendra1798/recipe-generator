@@ -207,4 +207,4 @@ marimo/_lsp/
 __marimo__/
 
 directml
-img/content/
+img/content/.DS_Store
