@@ -1,5 +1,5 @@
 # hack-princeton
-Qualcomm Hackathon at the Princeton University 
+Qualcomm Hackathon at the Princeton University (hack-princeton)
 
 # Setup Instructions for Recipe Generator
 
